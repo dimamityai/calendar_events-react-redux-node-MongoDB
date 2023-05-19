@@ -21,6 +21,7 @@ export const AuthActionCreators = {
             } else {
                 console.log(response)
                 localStorage.setItem('token', response.data.accessToken);
+                localStorage.setItem('refreshToken', response.data.refreshToken);
                 dispatch(AuthActionCreators.setError(''));
                 dispatch(AuthActionCreators.setUser(response.data.user));
                 dispatch(AuthActionCreators.setIsAuth(true));
@@ -51,6 +52,7 @@ export const AuthActionCreators = {
     logout: () => async (dispatch: AppDispatch) => {
             await AuthService.logout();
             localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
             dispatch(AuthActionCreators.setIsAuth(false));
             dispatch(AuthActionCreators.setUser({} as IUser));
 
@@ -58,8 +60,11 @@ export const AuthActionCreators = {
     checkAuth: () => async (dispatch: AppDispatch) => {
         dispatch(AuthActionCreators.setIsLoading(true));
         try{
-            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});
+            const refreshToken = localStorage.getItem('refreshToken');
+            // const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});
+            const response = await axios.post<AuthResponse>(`${API_URL}/refresh`, {refreshToken});
             localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
             dispatch(AuthActionCreators.setUser(response.data.user));
             dispatch(AuthActionCreators.setIsAuth(true));
         } catch (e){
