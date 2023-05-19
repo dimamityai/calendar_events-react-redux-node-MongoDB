@@ -2,7 +2,7 @@ import axios from 'axios'
 import {AuthResponse} from "../models/response/AuthResponse";
 
 
-export const API_URL = 'http://localhost:6007/api'
+export const API_URL = 'http://calendar-events-sand.vercel.app/api'
 
 
 const $api = axios.create({
